@@ -44,6 +44,7 @@
 		749A2A811F08178D00EFDB57 = {
 			isa = PBXGroup;
 			children = (
+				746677EE1F0AE10000063C40 /* README.md */,
 				749A2A8C1F08178E00EFDB57 /* fcpXMLGenerator */,
 				749A2A8B1F08178E00EFDB57 /* Products */,
 			);
@@ -62,7 +63,6 @@
 			children = (
 				749A2A8D1F08178E00EFDB57 /* main.swift */,
 				74B11C4B1F083DAA0033FF4E /* getOrPrint.swift */,
-				746677EE1F0AE10000063C40 /* README.md */,
 			);
 			path = fcpXMLGenerator;
 			sourceTree = "<group>";
