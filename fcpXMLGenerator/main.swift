@@ -10,12 +10,12 @@ import Foundation
 
 struct AtemCut: Codable {
 	let timecode: [UInt]
-	let source: UInt
+	let source: Int
 }
 
 struct CompressedAtemCut {
 	let timecode: UInt
-	let source: UInt
+	let source: Int
 	
 	init(_ atemCut: AtemCut) {
 		source = atemCut.source
@@ -46,23 +46,44 @@ guard let cuts = getOrPrint(
 	exit(EXIT_FAILURE)
 }
 
-//print(cuts)
+let angleIDs = ["","","",
+                "ShGzMjlURAOQaKvvkViLsg",
+                "X+PUoajRR7qt1+8WwCDFCg",
+                "yjkHZdNmR2y8/NrEATFk9g",
+                "UtLnlmx/RvC9aGr1RHl2PA",
+                "d8nY6HTnT7OXjBvP1Rxy5w",
+                "ryJYZISmT5CaFVA53AV1Kw",
+]
 
-let root = XMLElement(name: "spine")
+let  root = XMLElement(name: "spine")
+let audio = XMLElement(name: "mc-source")
+audio.setAttributesWith([
+	"angleID": "yvTXB1F9Q42RoWebKFzNdw",
+	"srcEnable": "audio"
+])
+
+let sources = angleIDs.map { angleID -> XMLElement in
+	let source = XMLElement(name: "mc-source")
+	source.setAttributesWith([
+		"angleID": angleID,
+		"srcEnable": "video"
+	])
+	return source
+}
 
 if let firstCut = cuts.first {
 	var previousCut = firstCut
 	for cut in cuts.dropFirst() {
-		let clip = XMLElement(name: "asset-clip")
+		let clip = XMLElement(name: "mc-clip")
 		clip.setAttributesWith([
-			"start": "\(previousCut.timecode+1)/25s",
+			"start": "\(previousCut.timecode-158084)/25s",
 			"duration": "\(cut.timecode - previousCut.timecode)/25s",
 			"offset": "\(previousCut.timecode - firstCut.timecode)/25s",
-			"name": "Blackmagic HyperDeck Studio Mini[0004]",
+			"name": "Dag 2",
 			"ref": "r2",
-			"audioRole": "dialogue",
-			"tcFormat": "NDF"
 		])
+		clip.addChild(sources[previousCut.source].copy() as! XMLElement)
+		clip.addChild(audio.copy() as! XMLElement)
 		root.addChild(clip)
 		previousCut = cut
 	}
