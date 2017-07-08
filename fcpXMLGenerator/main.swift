@@ -9,17 +9,14 @@
 import Foundation
 
 struct AtemCut: Codable {
-	let timecode: [UInt]
-	let source: Int
-}
-
-struct CompressedAtemCut {
 	let timecode: UInt
 	let source: Int
 	
-	init(_ atemCut: AtemCut) {
-		source = atemCut.source
-		timecode = atemCut.timecode[0]*60*60*25 + atemCut.timecode[1]*60*25 + atemCut.timecode[2]*25 + atemCut.timecode[3]
+	init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		source = try container.decode(Int.self, forKey: .source)
+		let timecodeComponents = try container.decode([UInt].self, forKey: .timecode)
+		timecode = timecodeComponents[0]*60*60*25 + timecodeComponents[1]*60*25 + timecodeComponents[2]*25 + timecodeComponents[3]
 	}
 }
 
@@ -41,7 +38,7 @@ let decoder = JSONDecoder()
 
 guard let cuts = getOrPrint(
 	errorMessage: "Unable to decode JSON",
-	value: { try decoder.decode([AtemCut].self, from: dataContent).map {CompressedAtemCut($0)}.sorted {$0.timecode < $1.timecode} }
+	value: { try decoder.decode([AtemCut].self, from: dataContent) }
 ) else {
 	exit(EXIT_FAILURE)
 }
